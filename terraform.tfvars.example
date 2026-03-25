@@ -1,0 +1,8 @@
+api_key          = "uuid"
+region           = "br-se1"
+key_pair_id      = "uuid"
+key_pair_secret  = "uuid"
+ssh_public_key   = "ssh-ed25519 AAAAC3Nza... admin@laptop"
+vm_default_name = "default-vm"
+vm_default_machine_type = "BV4-16-100"
+vm_default_image = "cloud-ubuntu-24.04 LTS"
