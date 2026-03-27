@@ -9,12 +9,12 @@ terraform {
   backend "s3" {
     bucket = "mgc-iac"
     key    = "terraform/terraform.tfstate"
-    region = "auto"
+    region = "br-se1"
 
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     skip_region_validation      = true
-    force_path_style            = true
+    use_path_style              = true
   }
 }
 
@@ -25,39 +25,40 @@ provider "mgc" {
   key_pair_secret = var.key_pair_secret
 }
 
-data "mgc_network_vpcs" "default_vpc" {
-}
-
-locals {
-  default_vpc = [
-    for vpc in data.mgc_network_vpcs.default_vpc.items :
-    vpc if vpc.name == "vpc_default"
-  ][0]
+module "vpcs" {
+  source                 = "./modules/vpcs"
+  vpc_name               = var.vpc_name
+  subnetpool_name        = var.vpc_subnetpool_name
+  subnetpool_description = var.vpc_subnetpool_description
+  dns_nameservers        = var.vpc_dns_nameservers
 }
 
 module "ssh_keys" {
   source     = "./modules/ssh_keys"
-  key_name   = "default-ssh-key"
+  key_name   = var.ssh_key_name
   public_key = var.ssh_public_key
 }
 
 module "security_groups" {
-  source      = "./modules/security_groups"
-  name        = "default-sg"
-  description = "Padrão"
+  source           = "./modules/security_groups"
+  name             = var.security_group_name
+  description      = var.security_group_description
+  vpc_subnets_cidrs = module.vpcs.subnet_cidrs
 }
 
 module "virtual_machines" {
-  source            = "./modules/virtual_machines"
-  name              = var.vm_default_name
-  machine_type      = var.vm_default_machine_type
-  image             = var.vm_default_image
-  availability_zone = var.availabiliy_zone
+  source   = "./modules/virtual_machines"
+  for_each = var.virtual_machines
+
+  name              = each.value.name
+  machine_type      = each.value.machine_type
+  image             = each.value.image
+  availability_zone = each.value.availability_zone
   ssh_key_name      = module.ssh_keys.name
   security_group_id = module.security_groups.id
-  vpc_id            = local.default_vpc.id
+  vpc_id            = module.vpcs.vpc_id
 }
 
-output "vm_ipv4" {
-  value = module.virtual_machines.ipv4
+output "vm_ipv4s" {
+  value = { for k, vm in module.virtual_machines : k => vm.ipv4 }
 }

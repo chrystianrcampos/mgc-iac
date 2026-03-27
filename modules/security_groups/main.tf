@@ -78,6 +78,17 @@ resource "mgc_network_security_groups_rules" "allow_https_ipv6" {
   security_group_id = mgc_network_security_groups.this.id
 }
 
+resource "mgc_network_security_groups_rules" "allow_icmp" {
+  for_each = toset(var.vpc_subnets_cidrs)
+
+  description       = "Permite ICMP de entrada da subnet ${each.value}"
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_ip_prefix  = each.value
+  security_group_id = mgc_network_security_groups.this.id
+}
+
 resource "mgc_network_security_groups_rules" "allow_egress" {
   description       = "Permite tráfego de saída de toda internet via IPv4"
   direction         = "egress"

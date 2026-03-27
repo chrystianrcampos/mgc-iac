@@ -1,8 +1,30 @@
-api_key          = "uuid"
-region           = "br-se1"
-key_pair_id      = "uuid"
-key_pair_secret  = "uuid"
-ssh_public_key   = "ssh-ed25519 AAAAC3Nza... admin@laptop"
-vm_default_name = "default-vm"
-vm_default_machine_type = "BV4-16-100"
-vm_default_image = "cloud-ubuntu-24.04 LTS"
+api_key         = "uuid"
+region          = "br-ne1"
+key_pair_id     = "uuid"
+key_pair_secret = "uuid"
+
+ssh_public_key = "ssh-ed25519 AAAAC3Nza... admin@laptop"
+ssh_key_name   = "my-ssh-key"
+
+security_group_name        = "my-sg"
+security_group_description = "Padrão"
+
+virtual_machines = {
+  vm-1 = {
+    name              = "my-vm-1"
+    machine_type      = "BV1-1-10"
+    image             = "cloud-ubuntu-24.04 LTS"
+    availability_zone = "br-ne1-a"
+  }
+  vm-2 = {
+    name              = "my-vm-2"
+    machine_type      = "BV1-1-10"
+    image             = "cloud-ubuntu-24.04 LTS"
+    availability_zone = "br-ne1-b"
+  }
+}
+
+vpc_name                   = "my-vpc"
+vpc_subnetpool_name        = "my-subnetpool"
+vpc_subnetpool_description = "Subnet pool da VPC"
+vpc_dns_nameservers        = ["1.1.1.1", "8.8.8.8"]
