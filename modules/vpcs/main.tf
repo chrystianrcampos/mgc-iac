@@ -7,7 +7,7 @@ terraform {
 }
 
 resource "mgc_network_vpcs" "vpc" {
-  name        = var.vpc_name
+  name = var.vpc_name
 }
 
 resource "mgc_network_subnetpools" "vpc_subnetpool" {

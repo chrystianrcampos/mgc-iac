@@ -40,9 +40,9 @@ module "ssh_keys" {
 }
 
 module "security_groups" {
-  source           = "./modules/security_groups"
-  name             = var.security_group_name
-  description      = var.security_group_description
+  source            = "./modules/security_groups"
+  name              = var.security_group_name
+  description       = var.security_group_description
   vpc_subnets_cidrs = module.vpcs.subnet_cidrs
 }
 
